@@ -1,0 +1,21 @@
+{
+  "name": "mailstick",
+  "version": "0.2.0",
+  "main": "./lib/main",
+
+  "title": "Mailstick",
+  "description": "Get to Inbox Zero every day. Draws some graphs to keep you motivated.",
+  "icon": "./icon.png",
+
+  "license": "GPL-3.0",
+  "engines": {
+    "nylas": ">=0.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dcposch/mailstick"
+  },
+  "windowTypes": {
+    "default": true
+  }
+}
