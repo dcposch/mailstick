@@ -3,6 +3,7 @@
  WorkspaceStore,
  ComponentRegistry} = require 'nylas-exports'
 MailstickView = require './mailstick-view'
+MailstickIcon = require './mailstick-icon'
 
 module.exports =
   # Activate is called when the package is loaded, gets prev saved state
@@ -14,10 +15,7 @@ module.exports =
     # Add a sidebar link that takes you to the mailstick sheet
     @sidebarItem = new WorkspaceStore.SidebarItem
       sheet: WorkspaceStore.Sheet.Mailstick
-      # NOTE: Nylas looks for mailstick@2x.png and mailstick@1x.png in
-      # N1/static/images/source-list, not in the plugin assets directory,
-      # so it looks like you can't actually specify your own icon here
-      icon: 'mailstick.png'
+      icon: MailstickIcon
       id: 'mailstick'
       name: 'Mailstick'
       section: 'Views'
