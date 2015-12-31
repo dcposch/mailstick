@@ -8,7 +8,21 @@
 }
 
 .punchcard {
-  width: 600px;
-  height: 200px;
-  border: 1px solid #888;
+  width: 800px;
+  height: 120px;
+  position: relative;
+}
+
+.punchcard > div {
+  position: absolute;
+}
+
+.punchcard-day-label {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.punchcard-day-label, .punchcard-month-label {
+  color: @text-color-very-subtle;
+  font-size: @font-size-smaller;
 }
