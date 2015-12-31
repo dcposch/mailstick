@@ -1,6 +1,6 @@
 {React} = require 'nylas-exports'
-moment = require 'moment'
 
+MS_PER_MINUTE = 1000 * 60
 MS_PER_DAY = 1000 * 3600 * 24
 MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -16,31 +16,43 @@ class WeeklyPunchcard extends React.Component
   # Every column represents one week
   # Inspired by Github's Contributions chart
   render: =>
-    # Dimensions in pixels
-    squareSize = 12
-    squareStride = 14
-    labelLeft = 18
-    labelTop = 20
+    # Dimensions in pixels, date range
+    now = new Date()
+    options =
+      squareSize: 12
+      squareStride: 14
+      labelLeft: 18
+      labelTop: 20
+      startDate: @_getLocalDateString(new Date(now.getTime() - 365*MS_PER_DAY))
+      endDate: @_getLocalDateString(now) # eg '2015-12-01', local tz
+
+    return @_render(options)
+
+  # Pure function with nothing hard coded, for testability
+  _render: (options) =>
+    {squareSize, squareStride, labelLeft, labelTop, startDate, endDate} = options
 
     # Do date math using integer days since 1970-01-01
-    today = new Date().getTime() // MS_PER_DAY
-    start = today - 365
+    start = Date.parse(startDate+'T00:00:00Z') // MS_PER_DAY
+    end = Date.parse(endDate+'T00:00:00Z') // MS_PER_DAY
     startWeek = @_getWeek(start)
 
     # Each day gets a square, colored by whatever daily data we're visualizing
-    dayBoxes = [start..today].map (day) =>
+    dayBoxes = [start..end].map (day) =>
       week = @_getWeek(day)
       dayOfWeek = @_getDayOfWeek(day)
+      data = @props.data[@_getISODate(day)]
+      color = @props.palette(data)
       style =
         left: (week - startWeek) * squareStride + labelLeft
         top: dayOfWeek * squareStride + labelTop
-        backgroundColor: '#00aa00' #@props.palette(data)
+        backgroundColor: color
         width: squareSize
         height: squareSize
       <div className="punchcard-day" style={style} />
 
     # Label months across the top
-    monthLabels = [start..today]
+    monthLabels = [start..end]
       .filter (day) =>
         @_getDayOfWeek(day) == 0
       .filter (day) =>
@@ -77,16 +89,31 @@ class WeeklyPunchcard extends React.Component
   # _getWeek(1) -> 0 # Friday, Jan 2 1970
   # _getWeek(3) -> 1 # Sunday, Jan 4 1970
   _getWeek: (day) =>
-    return (day + 4) // 7
+    (day + 4) // 7
 
   # Takes an integer day since 1970-01-01
   # Returns Sunday = 0, ..., Saturday = 6
   _getDayOfWeek: (day) =>
-    return (day + 4) % 7
+    (day + 4) % 7
 
   # Takes an integer day since 1970-01-01
   # Returns January = 1, ..., December = 12
   _getMonth: (day) =>
-    return new Date(day * MS_PER_DAY).getMonth() + 1
+    new Date(day * MS_PER_DAY).getUTCMonth() + 1
+
+  # Takes an integer day since 1970-01-01
+  # Returns the ISO representation.
+  # @_getISODate(0) -> "1970-01-01"
+  _getISODate: (day) =>
+    date = new Date(day * MS_PER_DAY)
+    pad = (num) -> (if num > 10 then '' else '0') + num
+    date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate())
+
+  # Takes a JS date object
+  # Returns "YYYY-MM-DD" in the local timezone
+  _getLocalDateString: (date) =>
+    pad = (num) -> (if num > 10 then '' else '0') + num
+    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate())
+
 
 module.exports = WeeklyPunchcard

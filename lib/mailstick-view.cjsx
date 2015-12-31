@@ -19,11 +19,10 @@ class MailstickView extends React.Component
       '2015-01-07': {'minInbox': 9, 'minInboxDelta': -30}
       '2015-01-08': {'minInbox': 0, 'minInboxDelta': -9}
       '2015-01-09': {'minInbox': 4, 'minInboxDelta': 4}
+
     <div className="mailstick">
       <h3>Inbox Zero</h3>
       <WeeklyPunchcard data={mailStats} palette={@_colorInboxZero} />
-      <h3>Time Spent</h3>
-      <WeeklyPunchcard />
     </div>
 
   # Takes stats for a single day, returns a color for that day:
@@ -32,21 +31,9 @@ class MailstickView extends React.Component
   _colorInboxZero: (emailStats) =>
     if !emailStats?
       '#666666'
-    else if emailStats.lowestInboxSize == 0
+    else if emailStats.minInbox == 0
       '#00aa00'
-    else if emailStats.lowestInboxSizeDelta <= 0
-      '#779900'
-    else
-      '#997700'
-
-   # Gray if you didn't check your email that day, light blue if once or twice,
-   # progessively darker blue to deep purple if you checked 10+ times
-  _colorTimeSpent: (emailStats) =>
-    if !emailStats?
-      '#666666'
-    else if emailStats.lowestInboxSize == 0
-      '#00aa00'
-    else if emailStats.lowestInboxSizeDelta <= 0
+    else if emailStats.minInboxDelta <= 0
       '#779900'
     else
       '#997700'
