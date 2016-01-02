@@ -2,7 +2,7 @@
 
 Green bar, inspired by Github, shows you how often you're getting to Inbox Zero.
 
-<!-- put a screenshot here -->
+![Screenshot](http://i.imgur.com/PUB6i48.png)
 
 
 #### Build documentation
