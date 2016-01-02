@@ -3,6 +3,7 @@
 {Menu,
  RetinaImg,
  Popover} = require 'nylas-component-kit'
+MailstickStore = require './mailstick-store'
 WeeklyPunchcard = require './weekly-punchcard'
 
 class MailstickView extends React.Component
@@ -10,19 +11,21 @@ class MailstickView extends React.Component
 
   @propTypes: {}
 
-  render: =>
-    mailStats =
-      '2015-01-01': {'minInbox': 4, 'minInboxDelta': 4}
-      '2015-01-02': {'minInbox': 0, 'minInboxDelta': -4}
-      '2015-01-04': {'minInbox': 0, 'minInboxDelta': 0}
-      '2015-01-05': {'minInbox': 39, 'minInboxDelta': 39}
-      '2015-01-07': {'minInbox': 9, 'minInboxDelta': -30}
-      '2015-01-08': {'minInbox': 0, 'minInboxDelta': -9}
-      '2015-01-09': {'minInbox': 4, 'minInboxDelta': 4}
+  constructor: ->
+    @state = @_getStateFromStores()
 
+  componentDidMount: =>
+    @unsubscribers = []
+    @unsubscribers.push MailstickStore.listen =>
+      @setState(@_getStateFromStores())
+
+  componentWillUnmount: =>
+    unsubscribe() for unsubscribe in @unsubscribers
+
+  render: =>
     <div className="mailstick">
       <h3>Inbox Zero</h3>
-      <WeeklyPunchcard data={mailStats} palette={@_colorInboxZero} />
+      <WeeklyPunchcard data={@state.mailStats} palette={@_colorInboxZero} />
     </div>
 
   # Takes stats for a single day, returns a color for that day:
@@ -30,12 +33,15 @@ class MailstickView extends React.Component
   # red-orange if it got bigger, gray if you didn't check your email that day
   _colorInboxZero: (emailStats) =>
     if !emailStats?
-      '#666666'
+      '#bbbbbb'
     else if emailStats.minInbox == 0
-      '#00aa00'
-    else if emailStats.minInboxDelta <= 0
-      '#779900'
+      '#238b45'
+    else if emailStats.minInbox <= 10
+      '#74c476'
     else
-      '#997700'
+      '#bae4b3'
+
+  _getStateFromStores: =>
+    {mailStats: MailstickStore.getMailStats()}
 
 module.exports = MailstickView
