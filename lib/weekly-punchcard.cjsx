@@ -11,6 +11,8 @@ class WeeklyPunchcard extends React.Component
   @propTypes:
     data: React.PropTypes.object.isRequired
     palette: React.PropTypes.func.isRequired
+    selectedDate: React.PropTypes.string
+    onClick: React.PropTypes.func
 
   # Draws a grid of squares, each representing one day, going back a year
   # Every column represents one week
@@ -41,7 +43,9 @@ class WeeklyPunchcard extends React.Component
     dayBoxes = [start..end].map (day) =>
       week = getWeek(day)
       dayOfWeek = getDayOfWeek(day)
-      data = @props.data[getISODate(day)]
+      isoDate = getISODate(day)
+      isSelected = isoDate == @props.selectedDate
+      data = @props.data[isoDate]
       color = @props.palette(data)
       style =
         left: (week - startWeek) * squareStride + labelLeft
@@ -49,7 +53,9 @@ class WeeklyPunchcard extends React.Component
         backgroundColor: color
         width: squareSize
         height: squareSize
-      <div className="punchcard-day" style={style} />
+      className = 'punchcard-day' + (if isSelected then ' selected' else '')
+      handler = @_handleClick.bind(this, isoDate)
+      <div className={className} style={style} onClick={handler} />
 
     # Label months across the top
     monthLabels = [start..end]
@@ -81,5 +87,10 @@ class WeeklyPunchcard extends React.Component
       {monthLabels}
       {dayBoxes}
     </div>
+
+  # Fires when the user clicks on one of the boxes
+  _handleClick: (date) =>
+    console.log("Clicked on " + date)
+    @props.onClick(date) if @props.onClick
 
 module.exports = WeeklyPunchcard

@@ -6,6 +6,7 @@ describe 'Dates', ->
     expect(getISODate(1)).toEqual('1970-01-02')
     expect(getISODate(2)).toEqual('1970-01-03')
     expect(getISODate(3)).toEqual('1970-01-04')
+    expect(getISODate(9)).toEqual('1970-01-10')
     expect(getISODate(16800)).toEqual('2015-12-31')
 
     expect(getMonth(0)).toEqual(1)

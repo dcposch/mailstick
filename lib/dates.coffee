@@ -24,13 +24,13 @@ getMonth = (day) ->
 # getISODate(0) -> "1970-01-01"
 getISODate = (day) ->
   date = new Date(day * MS_PER_DAY)
-  pad = (num) -> (if num > 10 then '' else '0') + num
+  pad = (num) -> (if num >= 10 then '' else '0') + num
   date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate())
 
 # Takes a JS date object
 # Returns "YYYY-MM-DD" in the local timezone
 getLocalDateString = (date) ->
-  pad = (num) -> (if num > 10 then '' else '0') + num
+  pad = (num) -> (if num >= 10 then '' else '0') + num
   return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate())
 
 module.exports = {getWeek, getDayOfWeek, getMonth, getISODate, getLocalDateString, MS_PER_DAY}
